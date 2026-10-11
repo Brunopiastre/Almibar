@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Al.Mi.Bar | Lista de precios</title>
+<meta name="description" content="Huevos, aceite de oliva, mieles, frutos secos y más. Mirá los precios y hacé tu pedido por WhatsApp.">
+<meta property="og:title" content="Al.Mi.Bar | Lista de precios">
+<meta property="og:description" content="Mirá los precios y hacé tu pedido por WhatsApp.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#ffffff;
+  --soft:#f3f6f1;
+  --ink:#16251d;
+  --muted:#5d6b62;
+  --line:#e1e7de;
+  --green:#1f5c3f;
+  --green-dark:#154530;
+  --honey:#e7a919;
+  --honey-soft:#fff6dc;
+  --head:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --body:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:128px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--green)}
+:focus-visible{outline:3px solid var(--honey);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+/* Cabecera */
+.top{padding:44px 0 26px}
+.brand{font-family:var(--head);font-weight:800;font-size:clamp(44px,9vw,84px);line-height:.95;letter-spacing:-.03em;margin:0;color:var(--green)}
+.sub{margin:12px 0 0;font-size:clamp(16px,2.4vw,19px);color:var(--muted);max-width:44ch}
+.avisos{margin:26px 0 0;padding:0;list-style:none;display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.avisos li{background:var(--honey-soft);border-left:4px solid var(--honey);padding:10px 14px;border-radius:0 8px 8px 0;font-weight:600;font-size:15px}
+
+/* Barra pegajosa: buscador + categorías */
+.bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.search{display:flex;align-items:center;gap:10px;padding:12px 0 8px}
+.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.search input:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(31,92,63,.15)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:#fff;padding:7px 14px;border-radius:999px;font-weight:600;font-size:14px;white-space:nowrap;color:var(--ink)}
+.chip:hover{border-color:var(--green)}
+.chip[aria-current="true"]{background:var(--green);border-color:var(--green);color:#fff}
+
+/* Secciones */
+main{padding:10px 0 150px}
+.cat{padding-top:30px}
+.cat h2{font-family:var(--head);font-weight:800;font-size:clamp(26px,4.5vw,36px);letter-spacing:-.02em;margin:0 0 4px;color:var(--ink)}
+.cat .count{color:var(--muted);font-size:14px;margin:0 0 6px}
+.list{display:grid;grid-template-columns:1fr;column-gap:44px}
+@media(min-width:820px){.list{grid-template-columns:1fr 1fr}}
+.prod{padding:14px 0;border-bottom:1px dotted #b9c4b6;break-inside:avoid}
+.prod-head{display:flex;gap:12px;align-items:flex-start}
+.prod-head .txt{flex:1;min-width:0}
+.pname{font-weight:700;font-size:17px;margin:0}
+.pdesc{margin:2px 0 0;color:var(--muted);font-size:14px}
+.thumb{flex:none;width:64px;height:64px;border-radius:10px;object-fit:cover;background:var(--soft)}
+.opts{margin-top:8px;display:grid;gap:6px}
+.opt{display:flex;align-items:center;gap:10px;min-height:40px}
+.opt .lbl{flex:1;color:var(--muted);font-size:15px;min-width:0}
+.opt .price{font-weight:700;font-variant-numeric:tabular-nums;font-size:17px}
+.opt.off .price{color:#9aa59d;text-decoration:line-through;font-weight:500}
+.agotado{font-size:13px;font-weight:700;color:#8a5a00;background:var(--honey-soft);padding:4px 10px;border-radius:999px}
+.add{border:1.5px solid var(--green);color:var(--green);background:#fff;font-weight:700;font-size:14px;padding:7px 14px;border-radius:999px;min-width:92px}
+.add:hover{background:var(--green);color:#fff}
+.step{display:inline-flex;align-items:center;border:1.5px solid var(--green);border-radius:999px;background:var(--green);color:#fff;overflow:hidden;min-width:92px;justify-content:space-between}
+.step button{border:0;background:transparent;color:#fff;width:34px;height:34px;font-size:20px;line-height:1;font-weight:600}
+.step button:hover{background:var(--green-dark)}
+.step span{min-width:22px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* Estados */
+.msg{padding:40px 0;color:var(--muted)}
+.msg button{margin-top:10px;border:1.5px solid var(--green);background:#fff;color:var(--green);font-weight:700;padding:8px 16px;border-radius:999px}
+.aviso-cache{margin:14px 0 0;padding:10px 14px;background:var(--soft);border-radius:8px;color:var(--muted);font-size:14px}
+.skel{height:18px;margin:14px 0;background:linear-gradient(90deg,var(--soft),#fff,var(--soft));border-radius:6px;background-size:200% 100%;animation:sh 1.4s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+footer{border-top:1px solid var(--line);padding:26px 0 150px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+
+/* Pedido */
+.cart{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(22,37,29,.08);transform:translateY(110%);transition:transform .25s ease}
+.cart.show{transform:none}
+.cart-sum{display:flex;align-items:center;gap:12px;padding:12px 0}
+.cart-sum .info{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0}
+.cart-sum .info b{display:block;font-size:18px;font-variant-numeric:tabular-nums}
+.cart-sum .info small{display:block;color:var(--muted);font-size:13px}
+.send{border:0;background:var(--green);color:#fff;font-weight:700;padding:13px 20px;border-radius:12px;font-size:16px}
+.send:hover{background:var(--green-dark)}
+.cart-items{display:none;max-height:42vh;overflow:auto;border-top:1px solid var(--line)}
+.cart.open .cart-items{display:block}
+.ci{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dotted #b9c4b6}
+.ci .n{flex:1;min-width:0;font-size:15px}
+.ci .n small{display:block;color:var(--muted)}
+.ci .p{font-weight:700;font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+.clear{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:14px;padding:10px 0}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cart{transition:none}.skel{animation:none}}
+@media(max-width:520px){.send{padding:12px 14px;font-size:15px}.top{padding-top:32px}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1 class="brand" id="brand">Al.Mi.Bar</h1>
+    <p class="sub" id="sub"></p>
+    <ul class="avisos" id="avisos" hidden></ul>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="search">
+      <input id="q" type="search" placeholder="Buscar un producto" aria-label="Buscar un producto" autocomplete="off">
+    </div>
+    <nav class="chips" id="chips" aria-label="Categorías"></nav>
+  </div>
+</div>
+
+<main>
+  <div class="wrap" id="root">
+    <div class="skel" style="width:40%"></div><div class="skel"></div><div class="skel"></div><div class="skel" style="width:70%"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span id="foot-name"></span>
+    <span id="foot-links"></span>
+  </div>
+</footer>
+
+<section class="cart" id="cart" aria-label="Tu pedido">
+  <div class="wrap">
+    <div class="cart-sum">
+      <button class="info" id="cart-toggle" aria-expanded="false" aria-controls="cart-items">
+        <b id="cart-total"></b>
+        <small id="cart-hint"></small>
+      </button>
+      <button class="send" id="send"></button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div id="cart-list"></div>
+      <button class="clear" id="cart-clear">Vaciar pedido</button>
+    </div>
+  </div>
+</section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== Lógica de la página: no hace falta tocar nada de acá ===== */
+function start(C, FALLBACK){
+  var $ = function(id){ return document.getElementById(id); };
+  var money = function(n){ return '$ ' + Math.round(n).toLocaleString('es-AR'); };
+  var norm = function(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').trim(); };
+  var esc = function(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+
+  /* Datos fijos de la cabecera */
+  $('brand').textContent = C.nombre;
+  document.title = C.nombre + ' | Lista de precios';
+  $('sub').textContent = C.subtitulo || '';
+  $('sub').hidden = !C.subtitulo;
+  $('foot-name').textContent = C.nombre;
+  var links = [];
+  if (C.instagram) links.push('<a href="' + esc(C.instagram) + '" target="_blank" rel="noopener">Instagram</a>');
+  if (C.whatsapp) links.push('<a href="https://wa.me/' + esc(C.whatsapp) + '" target="_blank" rel="noopener">WhatsApp</a>');
+  $('foot-links').innerHTML = links.join(' &nbsp;&middot;&nbsp; ');
+
+  /* CSV */
+  function parseCSV(text){
+    var rows = [], row = [], cur = '', q = false, i, ch;
+    text = text.replace(/^﻿/, '');
+    for (i = 0; i < text.length; i++){
+      ch = text[i];
+      if (q){
+        if (ch === '"'){ if (text[i+1] === '"'){ cur += '"'; i++; } else q = false; }
+        else cur += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ','){ row.push(cur); cur = ''; }
+      else if (ch === '\n' || ch === '\r'){
+        if (ch === '\r' && text[i+1] === '\n') i++;
+        row.push(cur); cur = ''; rows.push(row); row = [];
+      } else cur += ch;
+    }
+    if (cur !== '' || row.length){ row.push(cur); rows.push(row); }
+    return rows.filter(function(r){ return r.some(function(c){ return String(c).trim() !== ''; }); });
+  }
+  function parsePrice(v){
+    var s = String(v||'').replace(/[^\d.,]/g, '');
+    if (!s) return NaN;
+    if (/^\d{1,3}([.,]\d{3})+$/.test(s)) s = s.replace(/[.,]/g, '');
+    else if (/[.,]\d{1,2}$/.test(s)) { s = s.replace(/[.,](\d{1,2})$/, '#$1').replace(/[.,]/g, '').replace('#', '.'); }
+    else s = s.replace(/[.,]/g, '');
+    return parseFloat(s);
+  }
+  function fromRows(rows){
+    if (!rows.length) return null;
+    var head = rows[0].map(norm);
+    var ix = function(n){ return head.indexOf(n); };
+    var iC = ix('categoria'), iP = ix('producto'), iD = ix('descripcion'), iPr = ix('presentacion'),
+        iPc = ix('precio'), iA = ix('disponible'), iF = ix('foto');
+    if (iP < 0 || iPc < 0) return null;
+    var get = function(r, i){ return i < 0 ? '' : String(r[i]||'').trim(); };
+    var items = [];
+    rows.slice(1).forEach(function(r){
+      items.push({cat:get(r,iC), name:get(r,iP), desc:get(r,iD), pres:get(r,iPr), price:parsePrice(get(r,iPc)), avail:get(r,iA), photo:get(r,iF)});
+    });
+    return items;
+  }
+  function build(items){
+    var avisos = [], cats = [], map = {};
+    items.forEach(function(it){
+      if (norm(it.cat) === 'aviso'){ if (it.name) avisos.push(it.name); return; }
+      if (!it.name || isNaN(it.price)) return;
+      var cat = it.cat || 'Otros';
+      if (!map[cat]){ map[cat] = {name:cat, prods:[], idx:{}}; cats.push(map[cat]); }
+      var k = norm(it.name), c = map[cat];
+      if (c.idx[k] == null){ c.idx[k] = c.prods.length; c.prods.push({name:it.name, desc:'', photo:'', opts:[]}); }
+      var p = c.prods[c.idx[k]];
+      if (!p.desc && it.desc) p.desc = it.desc;
+      if (!p.photo && it.photo) p.photo = it.photo;
+      var a = norm(it.avail);
+      p.opts.push({pres:it.pres, price:it.price, ok: !(a === 'no' || a === 'agotado' || a === 'false' || a === '0')});
+    });
+    return {avisos:avisos, cats:cats};
+  }
+
+  /* Fotos de Google Drive */
+  function photoSrcs(url){
+    if (!url) return [];
+    var m = url.match(/\/d\/([\w-]{10,})/) || url.match(/[?&]id=([\w-]{10,})/);
+    if (m) return ['https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w300', 'https://lh3.googleusercontent.com/d/' + m[1] + '=w300', 'https://drive.google.com/uc?export=view&id=' + m[1]];
+    return [url];
+  }
+
+  /* Estado */
+  var DATA = null, cart = {}, usedFallback = false, query = '';
+  var keyOf = function(ci, pi, oi){ return ci + '.' + pi + '.' + oi; };
+  var lookup = function(key){
+    var p = key.split('.').map(Number), c = DATA.cats[p[0]];
+    if (!c || !c.prods[p[1]] || !c.prods[p[1]].opts[p[2]]) return null;
+    var pr = c.prods[p[1]], o = pr.opts[p[2]];
+    return {name:pr.name, pres:o.pres, price:o.price, ok:o.ok};
+  };
+  var signature = function(){ return DATA.cats.map(function(c){ return c.name; }).join('|'); };
+
+  function optHTML(ci, pi, o, oi){
+    var key = keyOf(ci, pi, oi), q = cart[key] || 0;
+    var right;
+    if (!o.ok) right = '<span class="agotado">Agotado</span>';
+    else if (q) right = '<span class="step"><button data-act="dec" data-k="' + key + '" aria-label="Quitar uno">&minus;</button><span>' + q + '</span><button data-act="inc" data-k="' + key + '" aria-label="Agregar uno">+</button></span>';
+    else right = '<button class="add" data-act="inc" data-k="' + key + '">Agregar</button>';
+    return '<div class="opt' + (o.ok ? '' : ' off') + '"><span class="lbl">' + esc(o.pres) + '</span><span class="price">' + money(o.price) + '</span>' + right + '</div>';
+  }
+
+  function render(){
+    var nq = norm(query), html = '', visible = [], total = 0;
+    DATA.cats.forEach(function(c, ci){
+      var prods = '', n = 0;
+      c.prods.forEach(function(p, pi){
+        if (nq && (norm(p.name) + ' ' + norm(p.desc) + ' ' + norm(c.name)).indexOf(nq) < 0) return;
+        n++;
+        var ph = '';
+        var srcs = photoSrcs(p.photo);
+        if (srcs.length) ph = '<img class="thumb" loading="lazy" alt="" src="' + esc(srcs[0]) + '" data-alt="' + esc(srcs.slice(1).join('|')) + '">';
+        prods += '<article class="prod"><div class="prod-head"><div class="txt"><h3 class="pname">' + esc(p.name) + '</h3>' +
+          (p.desc ? '<p class="pdesc">' + esc(p.desc) + '</p>' : '') + '</div>' + ph + '</div><div class="opts">' +
+          p.opts.map(function(o, oi){ return optHTML(ci, pi, o, oi); }).join('') + '</div></article>';
+      });
+      if (n){
+        visible.push(ci);
+        html += '<section class="cat" id="cat-' + ci + '"><h2>' + esc(c.name) + '</h2><p class="count">' + n + (n === 1 ? ' producto' : ' productos') + '</p><div class="list">' + prods + '</div></section>';
+      }
+    });
+    if (!visible.length){
+      html = '<div class="msg">No encontramos productos con &ldquo;' + esc(query) + '&rdquo;.<br><button id="noq">Borrar búsqueda</button></div>';
+    }
+    if (usedFallback) html = '<p class="aviso-cache">No pudimos actualizar la lista en este momento. Estás viendo la última lista guardada.</p>' + html;
+    $('root').innerHTML = html;
+    if ($('noq')) $('noq').onclick = function(){ $('q').value = ''; query = ''; render(); };
+    Array.prototype.forEach.call(document.querySelectorAll('img.thumb'), function(im){
+      im.onerror = function(){
+        var alts = (im.getAttribute('data-alt') || '').split('|').filter(Boolean);
+        if (alts.length){ im.src = alts.shift(); im.setAttribute('data-alt', alts.join('|')); }
+        else im.remove();
+      };
+    });
+    renderCart();
+  }
+
+  function renderChips(){
+    $('chips').innerHTML = DATA.cats.map(function(c, ci){
+      return '<button class="chip" data-ci="' + ci + '">' + esc(c.name) + '</button>';
+    }).join('');
+  }
+  function spy(){
+    var secs = document.querySelectorAll('.cat'), cur = null, y = 150;
+    secs.forEach(function(s){ if (s.getBoundingClientRect().top <= y) cur = s.id.replace('cat-', ''); });
+    Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(ch){
+      var on = ch.getAttribute('data-ci') === cur;
+      if (on) ch.setAttribute('aria-current', 'true'); else ch.removeAttribute('aria-current');
+      if (on && !ch._seen){ ch._seen = 1; }
+    });
+    var act = document.querySelector('.chip[aria-current="true"]');
+    var box = $('chips');
+    if (act && act !== spy.last){
+      spy.last = act;
+      box.scrollLeft = act.offsetLeft - box.clientWidth / 2 + act.clientWidth / 2;
+    }
+  }
+
+  function renderCart(){
+    var keys = Object.keys(cart).filter(function(k){ var l = lookup(k); return l && l.ok && cart[k] > 0; });
+    var total = 0, count = 0;
+    keys.forEach(function(k){ var l = lookup(k); total += l.price * cart[k]; count += cart[k]; });
+    var box = $('cart');
+    if (!keys.length){ box.classList.remove('show', 'open'); $('cart-toggle').setAttribute('aria-expanded', 'false'); return; }
+    box.classList.add('show');
+    $('cart-total').textContent = money(total) + ' · ' + count + (count === 1 ? ' producto' : ' productos');
+    var hint = 'Tocá para ver tu pedido';
+    if (C.envioGratisDesde){
+      hint = total >= C.envioGratisDesde ? 'Envío sin cargo' : 'Te faltan ' + money(C.envioGratisDesde - total) + ' para el envío sin cargo';
+    }
+    $('cart-hint').textContent = hint;
+    $('send').textContent = C.whatsapp ? 'Pedir por WhatsApp' : 'Copiar pedido';
+    $('cart-list').innerHTML = keys.map(function(k){
+      var l = lookup(k);
+      return '<div class="ci"><div class="n">' + esc(l.name) + (l.pres ? '<small>' + esc(l.pres) + '</small>' : '') + '</div>' +
+        '<span class="step"><button data-act="dec" data-k="' + k + '" aria-label="Quitar uno">&minus;</button><span>' + cart[k] + '</span><button data-act="inc" data-k="' + k + '" aria-label="Agregar uno">+</button></span>' +
+        '<span class="p">' + money(l.price * cart[k]) + '</span></div>';
+    }).join('');
+  }
+
+  function orderText(){
+    var lines = ['Hola! Quiero hacer este pedido:', ''], total = 0;
+    Object.keys(cart).forEach(function(k){
+      var l = lookup(k); if (!l || !l.ok || !(cart[k] > 0)) return;
+      total += l.price * cart[k];
+      lines.push('• ' + cart[k] + ' x ' + l.name + (l.pres ? ' (' + l.pres + ')' : '') + ' — ' + money(l.price * cart[k]));
+    });
+    lines.push('', 'Total: ' + money(total));
+    return lines.join('\n');
+  }
+  function toast(t){
+    var el = $('toast'); el.textContent = t; el.classList.add('on');
+    clearTimeout(toast.t); toast.t = setTimeout(function(){ el.classList.remove('on'); }, 2600);
+  }
+
+  /* Eventos */
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-act]');
+    if (b){
+      var k = b.getAttribute('data-k'), act = b.getAttribute('data-act');
+      var y = window.scrollY;
+      cart[k] = Math.max(0, (cart[k] || 0) + (act === 'inc' ? 1 : -1));
+      if (!cart[k]) delete cart[k];
+      try { localStorage.setItem(C.nombre + ':cart', JSON.stringify({sig:signature(), cart:cart})); } catch (_) {}
+      render(); window.scrollTo(0, y);
+      return;
+    }
+    var ch = e.target.closest('.chip');
+    if (ch){
+      if (query){ $('q').value = ''; query = ''; render(); }
+      var s = $('cat-' + ch.getAttribute('data-ci'));
+      if (s) s.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+    }
+  });
+  $('q').addEventListener('input', function(e){ query = e.target.value; render(); });
+  $('cart-toggle').addEventListener('click', function(){
+    var o = $('cart').classList.toggle('open');
+    $('cart-toggle').setAttribute('aria-expanded', o ? 'true' : 'false');
+  });
+  $('cart-clear').addEventListener('click', function(){
+    cart = {};
+    try { localStorage.removeItem(C.nombre + ':cart'); } catch (_) {}
+    render();
+  });
+  $('send').addEventListener('click', function(){
+    var text = orderText();
+    if (C.whatsapp){
+      window.open('https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+    } else if (navigator.clipboard){
+      navigator.clipboard.writeText(text).then(function(){ toast('Pedido copiado. Pegalo en un mensaje.'); }, function(){ toast('No se pudo copiar el pedido.'); });
+    } else toast('No se pudo copiar el pedido.');
+  });
+  var tick = false;
+  window.addEventListener('scroll', function(){ if (!tick){ tick = true; requestAnimationFrame(function(){ spy(); tick = false; }); } }, {passive:true});
+
+  /* Carga de datos */
+  function show(items){
+    DATA = build(items);
+    var av = $('avisos');
+    av.innerHTML = DATA.avisos.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('');
+    av.hidden = !DATA.avisos.length;
+    try {
+      var saved = JSON.parse(localStorage.getItem(C.nombre + ':cart') || 'null');
+      if (saved && saved.sig === signature()) cart = saved.cart || {};
+    } catch (_) {}
+    renderChips(); render(); spy();
+  }
+  function cacheKey(){ return C.nombre + ':lista'; }
+  function useFallback(){
+    var items = null;
+    try { items = JSON.parse(localStorage.getItem(cacheKey()) || 'null'); } catch (_) {}
+    if (!items || !items.length) items = FALLBACK;
+    usedFallback = !!C.planilla;
+    show(items);
+  }
+  if (!C.planilla){ show(FALLBACK); return; }
+  var ctl = ('AbortController' in window) ? new AbortController() : null;
+  var timer = setTimeout(function(){ if (ctl) ctl.abort(); }, 9000);
+  fetch(C.planilla, ctl ? {signal: ctl.signal, cache: 'no-store'} : {cache: 'no-store'})
+    .then(function(r){ if (!r.ok) throw new Error('http ' + r.status); return r.text(); })
+    .then(function(t){
+      clearTimeout(timer);
+      var items = fromRows(parseCSV(t));
+      if (!items || !items.some(function(i){ return i.name && !isNaN(i.price); })) throw new Error('planilla vacía o con otro formato');
+      try { localStorage.setItem(cacheKey(), JSON.stringify(items)); } catch (_) {}
+      show(items);
+    })
+    .catch(function(){ clearTimeout(timer); useFallback(); });
+}
+</script>
+
+<script>
+/* ===== LISTA DE RESPALDO =====
+   Es la lista del 15/9/2026. La página la usa solo si todavía no hay planilla conectada
+   o si la planilla no se puede leer. Los precios reales se editan en la planilla, no acá. */
+var RESPALDO = [{"cat":"Aviso","name":"Envíos mayores a $50.000 sin cargo","desc":"","pres":"","price":0,"avail":"","photo":""},{"cat":"Aviso","name":"Descuentos a jubilados","desc":"","pres":"","price":0,"avail":"","photo":""},{"cat":"Aviso","name":"Regalos especiales en compras superiores a $100.000","desc":"","pres":"","price":0,"avail":"","photo":""},{"cat":"Aviso","name":"Bonificaciones a miembros de la comunidad y seguidores de Instagram","desc":"","pres":"","price":0,"avail":"","photo":""},{"cat":"Huevos","name":"Huevos medianos","desc":"","pres":"1 maple","price":5500,"avail":"Sí","photo":""},{"cat":"Huevos","name":"Huevos medianos","desc":"","pres":"3 maples","price":16500,"avail":"Sí","photo":""},{"cat":"Huevos","name":"Huevos súper","desc":"","pres":"1 maple","price":6000,"avail":"Sí","photo":""},{"cat":"Huevos","name":"Huevos súper","desc":"","pres":"3 maples","price":18000,"avail":"Sí","photo":""},{"cat":"Huevos","name":"Huevos extra","desc":"","pres":"Maple x 20","price":5000,"avail":"Sí","photo":""},{"cat":"Aceites de oliva","name":"Aceite de oliva","desc":"","pres":"Bidón 5 L","price":60000,"avail":"Sí","photo":""},{"cat":"Aceites de oliva","name":"Aceite de oliva","desc":"","pres":"Bidón 3 L","price":45000,"avail":"Sí","photo":""},{"cat":"Aceites de oliva","name":"Aceite de oliva","desc":"","pres":"1 litro","price":18500,"avail":"Sí","photo":""},{"cat":"Aceites de oliva","name":"Aceite de oliva","desc":"","pres":"½ litro","price":9500,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel pura","desc":"Envasada y etiquetada en origen","pres":"250 g","price":4850,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel pura","desc":"Envasada y etiquetada en origen","pres":"500 g","price":6950,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel pura","desc":"Envasada y etiquetada en origen","pres":"1 kg","price":10500,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel con frutos secos","desc":"Envasada y etiquetada en origen","pres":"440 g","price":10600,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel con frutos secos","desc":"Envasada y etiquetada en origen","pres":"220 g","price":6860,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel con pistachos","desc":"Envasada y etiquetada en origen","pres":"220 g","price":11400,"avail":"Sí","photo":""},{"cat":"Mieles","name":"Miel negra","desc":"Envasada y etiquetada en origen","pres":"250 g","price":5800,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Nueces mariposa","desc":"","pres":"100 g","price":2500,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Nueces mariposa","desc":"","pres":"1 kg","price":23000,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Almendras","desc":"","pres":"100 g","price":2800,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Almendras","desc":"","pres":"1 kg","price":26500,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Castañas de cajú sin sal","desc":"","pres":"100 g","price":2600,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Castañas de cajú sin sal","desc":"","pres":"1 kg","price":24800,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Maní","desc":"Sin sal, con cáscara","pres":"100 g","price":550,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Maní","desc":"Sin sal, con cáscara","pres":"1 kg","price":5000,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Pasas jumbo","desc":"","pres":"100 g","price":1200,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Pasas jumbo","desc":"","pres":"1 kg","price":10500,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Pistachos","desc":"","pres":"100 g","price":6200,"avail":"Sí","photo":""},{"cat":"Frutos secos","name":"Pistachos","desc":"","pres":"1 kg","price":55000,"avail":"Sí","photo":""},{"cat":"Granolas","name":"Granola con semillas","desc":"","pres":"100 g","price":1500,"avail":"Sí","photo":""},{"cat":"Granolas","name":"Granola con semillas","desc":"","pres":"1 kg","price":12500,"avail":"Sí","photo":""},{"cat":"Granolas","name":"Granola con frutas","desc":"","pres":"100 g","price":1800,"avail":"Sí","photo":""},{"cat":"Granolas","name":"Granola con frutas","desc":"","pres":"1 kg","price":16000,"avail":"Sí","photo":""},{"cat":"Granolas","name":"Granola con frutos secos","desc":"","pres":"100 g","price":2000,"avail":"Sí","photo":""},{"cat":"Granolas","name":"Granola con frutos secos","desc":"","pres":"1 kg","price":18000,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Mix cervecero","desc":"","pres":"100 g","price":1600,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Mix clásico","desc":"Nueces, almendras, pasas y maní","pres":"100 g","price":1700,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Mix energético","desc":"Nueces, almendras, castañas y pasas","pres":"100 g","price":1900,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Mix seco","desc":"Nueces, almendras y castañas","pres":"100 g","price":2500,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Mix tropical","desc":"Nueces, almendras, maní, pasas y frutas desecadas","pres":"100 g","price":1800,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Frutas desecadas","desc":"","pres":"100 g","price":2300,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Ciruelas desecadas","desc":"","pres":"1 kg","price":13900,"avail":"Sí","photo":""},{"cat":"Mixes y frutas desecadas","name":"Duraznos desecados","desc":"","pres":"1 kg","price":24900,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Tuquito para dos","desc":"Listo","pres":"","price":6800,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Chutney de zapallo y tomate","desc":"","pres":"","price":5500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Alemana (relish)","desc":"","pres":"","price":5500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Ketchup artesanal","desc":"","pres":"","price":5500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Barbacoa","desc":"","pres":"","price":5500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Salsa picante clásica","desc":"","pres":"Botella 330 cc","price":8500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Salsa picante exótica","desc":"","pres":"Botella 330 cc","price":8500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Salsa picante hot","desc":"","pres":"Botella 330 cc","price":8500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Pepinillos agridulces","desc":"","pres":"","price":5500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Pepinillos con jalapeños","desc":"","pres":"","price":5500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Remolachas","desc":"","pres":"","price":5000,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Nachos","desc":"","pres":"100 g","price":2500,"avail":"Sí","photo":""},{"cat":"Salsas gourmet","name":"Chips de papas y batatas","desc":"","pres":"","price":4000,"avail":"Sí","photo":""},{"cat":"Fit","name":"Pasta de maní natural","desc":"","pres":"370 g","price":4200,"avail":"Sí","photo":""},{"cat":"Fit","name":"Pasta de maní proteica","desc":"","pres":"370 g","price":5290,"avail":"Sí","photo":""},{"cat":"Fit","name":"Ghee","desc":"","pres":"150 g","price":8300,"avail":"Sí","photo":""},{"cat":"Fit","name":"Ghee artesanal","desc":"","pres":"300 g","price":6500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Aceite de coco neutro","desc":"","pres":"200 g","price":5900,"avail":"Sí","photo":""},{"cat":"Fit","name":"Aceite de coco natural","desc":"","pres":"200 g","price":9800,"avail":"Sí","photo":""},{"cat":"Fit","name":"Leches vegetales","desc":"Almendra o coco","pres":"","price":4500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Electrolitos","desc":"","pres":"Sobre de 9 g","price":3500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Caldo de huesos","desc":"","pres":"8 cubitos","price":7900,"avail":"Sí","photo":""},{"cat":"Fit","name":"Jugo de arándanos","desc":"","pres":"1,5 L","price":5500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Avena instantánea","desc":"","pres":"1 kg","price":2900,"avail":"Sí","photo":""},{"cat":"Fit","name":"Polvo de espirulina con maca","desc":"","pres":"90 g","price":1200,"avail":"Sí","photo":""},{"cat":"Fit","name":"Vinagre de sidra de manzana","desc":"Crudo, con la madre","pres":"¼ litro","price":8500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Aceitunas verdes","desc":"","pres":"1 kg","price":11500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Tutucas","desc":"","pres":"100 g","price":500,"avail":"Sí","photo":""},{"cat":"Fit","name":"Barritas proteicas","desc":"","pres":"","price":1900,"avail":"Sí","photo":""},{"cat":"Fit","name":"Chocolate","desc":"Cacao 55%","pres":"","price":7700,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Chía","desc":"","pres":"100 g","price":1200,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Chía","desc":"","pres":"1 kg","price":10500,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Quinoa","desc":"","pres":"100 g","price":1000,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Quinoa","desc":"","pres":"1 kg","price":9500,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Lino","desc":"","pres":"100 g","price":800,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Lino","desc":"","pres":"1 kg","price":6300,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Girasol","desc":"","pres":"100 g","price":650,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Girasol","desc":"","pres":"1 kg","price":5500,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Calabaza","desc":"","pres":"100 g","price":2700,"avail":"Sí","photo":""},{"cat":"Semillas","name":"Calabaza","desc":"","pres":"1 kg","price":25300,"avail":"Sí","photo":""},{"cat":"Especias y hierbas","name":"Cúrcuma","desc":"","pres":"100 g","price":1700,"avail":"Sí","photo":""},{"cat":"Especias y hierbas","name":"Orégano","desc":"","pres":"100 g","price":1000,"avail":"Sí","photo":""},{"cat":"Especias y hierbas","name":"Manzanilla","desc":"","pres":"","price":5385,"avail":"Sí","photo":""},{"cat":"Especias y hierbas","name":"Hibiscus","desc":"","pres":"","price":3900,"avail":"Sí","photo":""},{"cat":"Legumbres","name":"Porotos blancos","desc":"","pres":"","price":2900,"avail":"Sí","photo":""},{"cat":"Legumbres","name":"Porotos negros","desc":"","pres":"","price":2400,"avail":"Sí","photo":""},{"cat":"Legumbres","name":"Porotos rojos","desc":"","pres":"","price":3600,"avail":"Sí","photo":""},{"cat":"Legumbres","name":"Garbanzos","desc":"","pres":"","price":2400,"avail":"Sí","photo":""},{"cat":"Legumbres","name":"Soja","desc":"","pres":"","price":2500,"avail":"Sí","photo":""},{"cat":"Legumbres","name":"Lentejas","desc":"","pres":"","price":3900,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Menta","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Burro","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Salvia","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Orégano","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Tomillo","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Curry","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Ruda","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Romero","desc":"Plantín","pres":"","price":3000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Cherry","desc":"Plantín","pres":"","price":5000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Lavanda","desc":"Plantín","pres":"","price":5000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Ciboulet","desc":"Plantín","pres":"","price":5000,"avail":"Sí","photo":""},{"cat":"Plantines aromáticos","name":"Tierra preparada","desc":"","pres":"5 L","price":5000,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Melena de león","desc":"","pres":"60 ml","price":21500,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Cordyceps","desc":"","pres":"60 ml","price":21000,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Reishi","desc":"","pres":"60 ml","price":21500,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Tremella","desc":"","pres":"60 ml","price":20000,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Ashwagandha","desc":"","pres":"60 ml","price":20000,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Aceite de orégano","desc":"","pres":"30 ml","price":15900,"avail":"Sí","photo":""},{"cat":"Adaptógenos","name":"Aceite de CNB","desc":"","pres":"15 ml","price":14800,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Sal del Himalaya fina","desc":"","pres":"1 kg","price":4800,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Dulce de membrillo artesanal","desc":"","pres":"","price":6000,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Dulce de membrillo en pan","desc":"","pres":"500 g","price":6300,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Dulce de alcayota","desc":"","pres":"350 g","price":4000,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Salsa de tomate","desc":"","pres":"x 500","price":1450,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Aceto balsámico","desc":"","pres":"x 250","price":11000,"avail":"Sí","photo":""},{"cat":"Despensa general","name":"Yerba orgánica","desc":"","pres":"1 kg","price":12900,"avail":"Sí","photo":""}];
+</script>
+
+<script>
+/* ===== CONFIGURACIÓN =====
+   Lo único que hay que completar para dejar la página andando. */
+var CONFIG = {
+  nombre: "Al.Mi.Bar",
+  subtitulo: "Huevos, aceite de oliva, mieles, frutos secos y despensa natural. Armá tu pedido y envialo por WhatsApp.",
+
+  // Link de la planilla publicada como CSV (Archivo > Compartir > Publicar en la web > pestaña Productos > .csv)
+  planilla: "",
+
+  // Número de WhatsApp con código de país y sin signos ni espacios. Ejemplo: 5492615551234
+  whatsapp: "",
+
+  // Link completo al Instagram del negocio (opcional). Ejemplo: https://instagram.com/usuario
+  instagram: "",
+
+  // Monto desde el cual el envío no tiene costo. Poné 0 para ocultar el aviso en el pedido.
+  envioGratisDesde: 50000
+};
+start(CONFIG, RESPALDO);
+</script>
+</body>
+</html>
